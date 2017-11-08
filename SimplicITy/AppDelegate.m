@@ -134,7 +134,7 @@
     NSDictionary *userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
     if (userInfo != nil)
     {
-        [self getNotification:userInfo];
+       // [self getNotification:userInfo];
     }
     return YES;
 }

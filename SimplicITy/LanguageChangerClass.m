@@ -144,7 +144,11 @@
 }
 
 
-
+//- (void)postman:(Postman *)postman gotFailure:(NSError *)error forURL:(NSString *)urlString{
+//    
+//    NSLog(@"Failour internet problem");
+//    
+//}
 
 
 

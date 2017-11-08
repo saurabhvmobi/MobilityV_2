@@ -293,44 +293,59 @@
 
 - (IBAction)doneBtnPressed:(id)sender
 {
-    
-    LanguageModel *selectedlanguage = languagesArrOfData[[self.tableView indexPathForSelectedRow].row];
-    NSString *currentLang =[[NSUserDefaults standardUserDefaults]objectForKey:@"SelectedLanguageCode"];
-    
-    if ([currentLang isEqualToString:selectedlanguage.code]) {
-        [self dismissViewControllerAnimated:YES completion:nil];
-
-    } else {
-        [[NSUserDefaults standardUserDefaults] setObject:selectedlanguage.name forKey:@"SelectedLanguageName"];
-        [[NSUserDefaults standardUserDefaults] setObject:selectedlanguage.code forKey:@"SelectedLanguageCode"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        
-        
-        NSString *seedKeyForLang = [NSString stringWithFormat:@"uilabel,%@",selectedlanguage.code];
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:seedKeyForLang])
-        {
-            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [langChanger changeLanguageWithCode:selectedlanguage.code];
-        }else
-        {
-            [langChanger readLanguageFileFromDocumentDirectory:NO];
-            [self dismissViewControllerAnimated:YES completion:nil];
-        }
    
+    if ([AFNetworkReachabilityManager sharedManager].isReachable )
+    {
+        LanguageModel *selectedlanguage = languagesArrOfData[[self.tableView indexPathForSelectedRow].row];
+        NSString *currentLang =[[NSUserDefaults standardUserDefaults]objectForKey:@"SelectedLanguageCode"];
+        
+        if ([currentLang isEqualToString:selectedlanguage.code]) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+            
+        } else {
+            [[NSUserDefaults standardUserDefaults] setObject:selectedlanguage.name forKey:@"SelectedLanguageName"];
+            [[NSUserDefaults standardUserDefaults] setObject:selectedlanguage.code forKey:@"SelectedLanguageCode"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+            NSString *seedKeyForLang = [NSString stringWithFormat:@"uilabel,%@",selectedlanguage.code];
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:seedKeyForLang])
+            {
+                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                [langChanger changeLanguageWithCode:selectedlanguage.code];
+            }else
+            {
+                [langChanger readLanguageFileFromDocumentDirectory:NO];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+            
+        }
+        [self.delegate selectedLanguageis:selectedlanguage];
+        
+
+    
+    }else
+    {
+            UIAlertView *noNetworkAlert = [[UIAlertView alloc] initWithTitle:WARNING_TEXT message:INTERNET_IS_REQUIRED_TO_SYNC_DATA delegate:nil cancelButtonTitle:OK_FOR_ALERT otherButtonTitles: nil];
+            [noNetworkAlert show];
     }
     
     
-        [self.delegate selectedLanguageis:selectedlanguage];
+   
+
 
 }
 
 -(void)successResponseDelegateMethod
 {
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
- [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)failourResponseDelegateMethod{
+    
+
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+}
 
 
 #pragma mark UITableViewDataSource methods
@@ -403,5 +418,7 @@
  // Pass the selected object to the new view controller.
  }
  */
+
+
 
 @end
